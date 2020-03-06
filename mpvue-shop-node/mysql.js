@@ -1,3 +1,5 @@
+//mysql的线程连接
+
 //获取基础配置
 const configs = require('./config')
 
@@ -12,4 +14,4 @@ var knex = require('knex') ({
   }
 })
 //将基础配置和sdk.config 合并  导出初始化完成的sdk
-module.exports = {mysql,knex }
+module.exports = { mysql: knex }

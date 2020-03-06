@@ -1,5 +1,7 @@
+//mysql的配置
+
 const CONF = {
-  port: '5757',
+  port: '3366',
   mysql: {
     host: 'localhost',
     port: 3306,
