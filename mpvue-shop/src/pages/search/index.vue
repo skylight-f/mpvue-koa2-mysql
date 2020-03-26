@@ -15,13 +15,15 @@
       </div>
       <div class="nogoods">没有您搜索的宝贝哦!</div>
     </div>
-    <div class="history">
+    <div class="history" v-if="historyData.length!==0">
       <div class="t">
         <div>历史记录</div>
         <div @click="clearHistory"></div>
       </div>
       <div class="cont">
-        <div>日式</div>
+        <div  v-for="(item,index) in historyData" :key="index" @click="searchWords" :data-value="item.keyword">
+          {{item.keyword}}
+        </div>
       </div>
     </div>
     <div class="history hotsearch">
@@ -29,8 +31,9 @@
         <div>热门搜索</div>
       </div>
       <div class="cont">
-        <div class="active">日式</div>
-        <div>fd</div>
+        <div v-for="(item, index) in hotData" :key="index" :class="{active: item.is_hot==1}" @click="searchWords" :data-value="item.keyword">
+          {{item.keyword}}
+        </div>
       </div>
     </div>
   </div>
@@ -41,25 +44,51 @@ import {get,post} from '../../utils'
 export default {
   data () {
     return {
-      words: ''
+      words: '',
+      openid: '',
+      hotData: '',
+      historyData: ''
     }
+  },
+  mounted () {
+    this.openid = wx.getStorageSync('openId') || ''
+    this.getHotData()
   },
   methods: {
     clearInput() {
       this.words= ''
     },
     cancel() {},
-    clearHistory() {},
-    tipsearch() {},
+    async clearHistory() {
+      const data = await post('/search/clearhistoryAction',{
+      openId: this.openid
+      })
+      if (data) {
+        this.historyData = []
+      }
+     },
+    async tipsearch() {
+        const data = await get('/search/helperaction',{
+          keyword: this.words
+        })
+        console.log(data)
+    },
     async searchWords(e) {
       console.log(e)
-      let value =e.target.dataset.value
+      let value =e.currentTarget.dataset.value
       this.words = value || this.words
       const  data = await post('/search/addhistoryaction',{
-        openId: this.words,
+        openId: this.openid,
         keyword: value || this.words
       }) 
-      console.log(data)
+      // console.log(data)
+      //获取历史记录
+      this.getHotData()
+    },
+    async getHotData (first) {
+      const data = await get('/search/indexaction?openId=' + this.openid)
+      this.historyData = data.historyData
+      this.hotData = data.hotKeywordList
     }
   }
 };

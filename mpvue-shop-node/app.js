@@ -1,9 +1,10 @@
 const koa = require('koa')
-const config =require('./config')
 const app = new koa()
+const bodyParser = require('koa-bodyparser') 
+const config =require('./config')
 const router = require('./routes')
 
-
+app.use(bodyParser())
 
 app.use(router.routes())
 
