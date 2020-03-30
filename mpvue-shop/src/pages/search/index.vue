@@ -10,10 +10,12 @@
       <div @click="cancel">取消</div>
     </div>
     <div class="searchtips" v-if="words">
-      <div>
-        牙刷
+      <div v-if="tipsData.length !==0">
+      <div v-for="(item,index) in tipsData" :key="index"  @click="searchWords" :data-value="item.name">
+        {{item.name}}
       </div>
-      <div class="nogoods">没有您搜索的宝贝哦!</div>
+      </div>
+      <div class="nogoods" v-else>没有您搜索的宝贝哦!</div>
     </div>
     <div class="history" v-if="historyData.length!==0">
       <div class="t">
@@ -36,6 +38,21 @@
         </div>
       </div>
     </div>
+    <!-- 商品列表 -->
+    <div class="goodsList" v-if="listData.length!==0">
+      <div class="sortnav">
+        <div @click="changeTab(0)" :class="[0 == nowIndex ? 'active' : '']">综合</div>
+        <div @click="changeTab(1)" :class="[1 == nowIndex ? 'active' : '']" class="price">价格</div>
+        <div @click="changeTab(2)" :class="[2 == nowIndex ? 'active' : '']">分类</div>
+      </div>
+      <div class="sortlist" >
+        <div class="item" v-for="(item,index) in listData" :key="index" @click="goodsDetail(item.id)">
+          <img :src="item.list_pic_url" alt="">
+          <p class="name">{{item.name}}</p>
+          <p class="price">￥{{item.retail_price}}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -46,8 +63,11 @@ export default {
     return {
       words: '',
       openid: '',
-      hotData: '',
-      historyData: ''
+      hotData: [],
+      historyData: [],
+      tipsData: [],
+      listData:[],
+      nowIndex: 0
     }
   },
   mounted () {
@@ -58,7 +78,17 @@ export default {
     clearInput() {
       this.words= ''
     },
-    cancel() {},
+    cancel() {
+      wx.navigateBack({
+        delta: 1
+      })
+    },
+    inputFocus() {
+      //商品清空
+      this.listData = []
+      //展示搜索提示信息
+      this.tipsearch()
+    },
     async clearHistory() {
       const data = await post('/search/clearhistoryAction',{
       openId: this.openid
@@ -71,10 +101,10 @@ export default {
         const data = await get('/search/helperaction',{
           keyword: this.words
         })
-        console.log(data)
+        this.tipsData = data.keywords
     },
     async searchWords(e) {
-      console.log(e)
+      // console.log(e)
       let value =e.currentTarget.dataset.value
       this.words = value || this.words
       const  data = await post('/search/addhistoryaction',{
@@ -84,14 +114,38 @@ export default {
       // console.log(data)
       //获取历史记录
       this.getHotData()
+      this.getlistData()
     },
     async getHotData (first) {
       const data = await get('/search/indexaction?openId=' + this.openid)
       this.historyData = data.historyData
       this.hotData = data.hotKeywordList
+    },
+    async getlistData () {
+      //获取商品列表
+      const data = await get('/search/helperaction',{
+        keyword: this.words,
+        order: this.order
+      })
+      this.listData = data.keywords
+      this.tipsData = []
+    },
+    changeTab(index) {
+      this.nowIndex = index
+       if (index == 1) {
+         this.order = this.order == 'desc' ? 'asc' : 'desc'
+       } else {
+         this.order = ''
+       }
+       this.getlistData()
+    },
+    goodsDetail (id) {
+      wx.navigateTo({
+        url: '/pages/goods/main?id='+ id
+      });
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/search/main",
     "pages/index/main",
+    "pages/search/main",
     "pages/mappage/main",
     "pages/topic/main",
     "pages/cart/main",
@@ -9,7 +9,8 @@
     "pages/my/main",
     "pages/brandList/main",
     "pages/newgoods/main",
-    "pages/topicdetail/main"
+    "pages/topicdetail/main",
+    "pages/goods/main"
     
     
   ],
