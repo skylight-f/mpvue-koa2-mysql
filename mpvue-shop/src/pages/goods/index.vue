@@ -38,7 +38,7 @@
     </div>
   </div>
   <!-- 图片展示 -->
-  <div class="detail" v-if="goods_desc">
+    <div class="detail" v-if="goods_desc">
       <wxParse :content="goods_desc" />
     </div>
     <!-- 常见问题 -->
@@ -73,16 +73,16 @@
     <!-- footer -->
     <div class="bottom-fixed">
       <div class="collect-box" @click="collect">
-        <div class="collect"></div>
+        <div class="collect" :class="[collectFlag ? 'active' : '']"></div>
       </div>
-      <div class="car-box">
+      <div class="car-box" @click="toCart">
         <div class="car">
-          <span>3</span>
+          <span>{{allnumber}}</span>
           <img src="/static/images/ic_menu_shoping_nor.png" alt="">
         </div>
       </div>
-      <div>立即购买</div>
-      <div>加入购物车</div>
+      <div @click="buy">立即购买</div>
+      <div @click="addCart">加入购物车</div>
     </div>
   <!-- 选择规格的弹出层 -->
    <div class="pop" v-show="showpop" @click="showType"></div>
@@ -128,7 +128,11 @@ data () {
      attribute: [],
      goods_desc: '',
      issueList: [], //常见问题
-     productList: []
+     productList: [],
+     collectFlag: false,
+     goodsId: '',
+     allnumber: 0,
+     allPrice: 0
    }
  },
  components: {
@@ -145,12 +149,13 @@ data () {
  },
  mounted () {
     this.openId = wx.getStorageSync('openId') || '';
+    this.id = this.$root.$mp.query.id
     this.goodsDetail()
  },
 methods: {
   async goodsDetail() {
      const data = await get('/goods/detailaction',{
-       id: 1009024,
+       id: this.id,
        openId: this.openId
      })
      console.log(data)
@@ -160,6 +165,10 @@ methods: {
      this.goods_desc = data.info.goods_desc
      this.issueList = data.issue
      this.productList = data.productList
+     this.goodsId = data.info.id
+     this.collectFlag = data.collected
+     this.allnumber = data.allnumber
+     this.allPrice = data.info.retail_price
    },
   showType() {
     this.showpop = !this.showpop
@@ -171,6 +180,76 @@ methods: {
     if (this.number>1){
       this.number -=1
     } 
+  },
+  async collect () {
+    this.collectFlag = !this.collectFlag
+    const data = await post('/collect/addcollect',{
+      openId: this.openId,
+      goodsId: this.goodsId
+    })
+  },
+  toCart () {
+    wx.switchTab({
+      url: '/pages/cart/main'
+    })
+  },
+  async addCart(){
+    if (this.showpop) {
+      
+      if (this.number === 0) {
+        wx.showToast({
+          title: '请选择商品数量',
+          duration: 2000,
+          icon: 'none',
+          mask: true,
+          success: res => {}
+        })
+        return false
+      }
+      const data =await post('/cart/addCart',{
+        openId: this.openId,
+        goodsId: this.goodsId,
+        number: this.number
+      })
+      if (data) {
+        this.allnumber = this.allnumber + this.number
+        wx.showToast({
+          title: '成功加入购物车',
+          duration: 1500,
+          icon: 'success'
+        })
+      }
+    }
+    else {
+      this.showpop = true
+    }
+  },
+  async buy () {
+    if (this.showpop) {
+      if (this.number === 0) {
+        wx.showToast({
+          title: '请选择商品数量',
+          duration: 2000,
+          icon: 'none',
+          mask: true,
+          success: res => {}
+        })
+        return false
+      }
+      const data = await post('/order/submitAction',{
+        goodsId: this.goodsId,
+        openId: this.openId,
+        allPrice: this.allPrice
+      })
+      if (data) {
+        wx.navigateTo({
+          url: '/pages/order/main'
+        })
+      }
+    }
+    else {
+      this.showpop = true
+    }
   }
  }
 }
