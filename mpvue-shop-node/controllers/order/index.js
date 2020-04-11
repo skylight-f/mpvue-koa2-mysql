@@ -1,13 +1,10 @@
 const { mysql } = require('../../mysql')
 
 async function submitAction (ctx) {
-  const {openId,goodsId,allPrice} = ctx.request.body
-  // 或者使用以下写法
-  // let goodsId = ctx.request.body.goodsId
-  // let allPrice = ctx.request.body.allPrice
-
-
-  //是否存在订单
+  const { openId } = ctx.request.body
+  let goodsId = ctx.request.body.goodsId
+  let allPrice = ctx.request.body.allPrice
+  // 是否存在订单
   const isOrder = await mysql('nideshop_order').where({
     'user_id': openId
   }).select()
@@ -23,14 +20,12 @@ async function submitAction (ctx) {
       ctx.body = {
         data: true
       }
-    }
-    else {
+    } else {
       ctx.body = {
         data: false
       }
     }
-  }
-  else {
+  } else {
     const data = await mysql('nideshop_order').insert({
       user_id: openId,
       goods_id: goodsId,
@@ -40,8 +35,7 @@ async function submitAction (ctx) {
       ctx.body = {
         data: true
       }
-    }
-    else {
+    } else {
       ctx.body = {
         data: false
       }
@@ -49,7 +43,37 @@ async function submitAction (ctx) {
   }
 }
 
+async function detailAction (ctx) {
+  const openId = ctx.query.openId
+  const addressId = ctx.query.addressId || ''
+  const orderDetail = await mysql('nideshop_order').where({
+    'user_id': openId
+  }).select()
+  var goodsIds = orderDetail[0].goods_id.split(',')
 
-module.exports= {
-  submitAction
+  const list = await mysql('nideshop_cart').andWhere({
+    'user_id': openId
+  }).whereIn('goods_id', goodsIds).select()
+  // 收货地址
+  var addressList;
+  if (addressId) {
+    addressList = await mysql('nideshop_address').where({
+      'user_id': openId,
+      'id': addressId
+    }).orderBy('is_default', 'desc').select()
+  } else {
+    addressList = await mysql('nideshop_address').where({
+      'user_id': openId
+    }).orderBy('is_default', 'desc').select()
+  }
+  ctx.body = {
+    price: orderDetail[0].allprice,
+    goodsList: list,
+    address: addressList[0] || {}
+  }
+}
+
+module.exports = {
+  submitAction,
+  detailAction
 }

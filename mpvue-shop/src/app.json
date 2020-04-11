@@ -1,5 +1,7 @@
 {
   "pages": [
+    "pages/addressSelect/main",
+    "pages/order/main",
     "pages/index/main",
     "pages/goods/main",
     "pages/search/main",
@@ -10,9 +12,7 @@
     "pages/my/main",
     "pages/brandList/main",
     "pages/newgoods/main",
-    "pages/topicdetail/main",
-    "pages/order/main"
-    
+    "pages/addaddress/main"
     
   ],
   "window": {
