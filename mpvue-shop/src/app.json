@@ -1,8 +1,8 @@
 {
   "pages": [
     "pages/addressSelect/main",
-    "pages/order/main",
     "pages/index/main",
+    "pages/order/main",
     "pages/goods/main",
     "pages/search/main",
     "pages/mappage/main",
