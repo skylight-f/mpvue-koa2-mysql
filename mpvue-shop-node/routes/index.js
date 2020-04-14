@@ -21,9 +21,12 @@ router.post('/order/submitAction',controllers.order.index.submitAction)
 router.get('/order/detailAction',controllers.order.index.detailAction)
 //购物车相关的接口
 router.post('/cart/addCart',controllers.cart.index.addCart)
+router.get('/cart/cartList',controllers.cart.index.cartList)
+
 
 //收货地址相关的接口
 router.get('/address/getListAction',controllers.address.index.getListAction)
 router.get('/address/detailAction',controllers.address.index.detailAction)
+router.post('/address/saveAction',controllers.address.index.saveAction)
 
 module.exports = router

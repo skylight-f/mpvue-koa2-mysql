@@ -60,6 +60,14 @@ export default {
       this.id = this.$root.$mp.query.id
       this.getDetail()
     }
+    // else {
+    //   this.id= ''
+    //   this.userName = ''
+    //   this.telNumber = ''
+    //   this.address = ''
+    //   this.detailaddress = ''
+    //   this.checked= ''
+    // }
   },
   methods: {
     async getDetail () {

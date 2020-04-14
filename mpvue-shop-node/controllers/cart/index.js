@@ -39,7 +39,16 @@ async function addCart(ctx) {
     data: 'success'
   }
 }
-
+async function cartList(ctx) {
+ const { openId } = ctx.query
+ const cartList = await mysql('nideshop_cart').where({
+   'user_id': openId
+ }).select()
+ ctx.body = {
+   data: cartList
+ }
+}
 module.exports = {
-  addCart
+  addCart,
+  cartList
 }
