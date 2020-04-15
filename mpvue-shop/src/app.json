@@ -1,14 +1,16 @@
 {
   "pages": [
-    "pages/cart/main",
+    "pages/topic/main",
+    "pages/topicdetail/main",
     "pages/index/main",
+    "pages/categorylist/main",
+    "pages/cart/main",
     "pages/goods/main",
     "pages/order/main",
     "pages/addressSelect/main",
     "pages/search/main",
     "pages/mappage/main",
-    "pages/topic/main",
-    "pages/cartgory/main",
+    "pages/category/main",
     "pages/my/main",
     "pages/brandList/main",
     "pages/newgoods/main",
@@ -43,7 +45,7 @@
         "text":"专题"
       },
       { 
-        "pagePath": "pages/cartgory/main",
+        "pagePath": "pages/category/main",
         "iconPath": "static/images/ic_menu_sort_nor.png",
         "selectedIconPath": "static/images/ic_menu_sort_pressed.png",
         "text":"分类"

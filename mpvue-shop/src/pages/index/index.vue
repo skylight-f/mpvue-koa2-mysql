@@ -214,7 +214,7 @@ export default {
     },
     categoryList(id) {
       wx.navigateTo({
-        url: "/pages/categoryList/main?id=" + id
+        url: "/pages/categorylist/main?id=" + id
       });
     },
     branddetail(id) {
