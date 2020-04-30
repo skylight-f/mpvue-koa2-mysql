@@ -1,8 +1,6 @@
 # mpvue-shop-node
 仿网易严选，全栈微信小程序
 
-小程序的全栈开发, 学习视频教程请移步：https://www.bilibili.com/video/av83423939/
-
 #### mpvue-shop 文件是该小程序的前端项目，使用mpvue，
 
 #### mpvue-shop-node 文件是该小程序的后端项目，使用koa2
